@@ -71,4 +71,22 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// POST to create a reaction stored in a single thought's reactions array field
+router.post("/:thoughtId/reactions", async (req, res) => {
+  try {
+    const thought = await Thought.findById(req.params.thoughtId);
+    if (!thought) return res.status(404).json({ message: "Thought not found" });
+
+    thought.reactions.push({
+      reactionBody: req.body.reactionBody,
+      username: req.body.username,
+    });
+
+    await thought.save();
+    res.json({ message: "Reaction added", reactions: thought.reactions });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
