@@ -63,7 +63,7 @@ router.delete("/:id", async (req, res) => {
     // BONUS: Remove a user's associated thoughts when deleted.
     await Thought.deleteMany({ _id: { $in: user.thoughts } });
 
-    await user.remove();
+    await User.deleteOne({ _id: req.params.id });
     res.json({ message: "User deleted" });
   } catch (err) {
     res.status(500).json({ message: err.message });
