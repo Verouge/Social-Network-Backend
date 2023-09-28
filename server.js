@@ -9,7 +9,6 @@ const PORT = 3000;
 mongoose.connect("mongodb://localhost:27017/social_media_db", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useFindAndModify: false, // This option is added to address the deprecation warning for findByIdAndUpdate
 });
 
 mongoose.connection.on("connected", () => {
