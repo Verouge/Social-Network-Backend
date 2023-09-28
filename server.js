@@ -1,15 +1,10 @@
 const express = require("express");
+const db = require("./config/connection");
 const mongoose = require("mongoose");
 const routes = require("./routes");
 
+const PORT = process.env.PORT || 3000;
 const app = express();
-const PORT = 3000;
-
-// Connect to MongoDB using Mongoose
-mongoose.connect("mongodb://localhost:27017/social_media_db", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
 
 mongoose.connection.on("connected", () => {
   console.log("Connected to MongoDB");
@@ -20,11 +15,12 @@ mongoose.connection.on("error", (err) => {
 });
 
 // Middleware to parse incoming JSON data
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// Use the consolidated routes from the 'routes' directory
 app.use("/api", routes);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+db.once("open", () => {
+  app.listen(PORT, () => {
+    console.log(`API server running on port ${PORT}!`);
+  });
 });
