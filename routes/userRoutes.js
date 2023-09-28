@@ -69,3 +69,24 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// POST to add a new friend to a user's friend list
+router.post("/:userId/friends/:friendId", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const friend = await User.findById(req.params.friendId);
+    if (!friend) return res.status(404).json({ message: "Friend not found" });
+
+    if (user.friends.includes(friend._id))
+      return res.status(400).json({ message: "Friend already added" });
+
+    user.friends.push(friend._id);
+    await user.save();
+
+    res.json({ message: "Friend added" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
