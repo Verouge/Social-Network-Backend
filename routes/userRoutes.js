@@ -90,3 +90,22 @@ router.post("/:userId/friends/:friendId", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// DELETE to remove a friend from a user's friend list
+router.delete("/:userId/friends/:friendId", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const friendIndex = user.friends.indexOf(req.params.friendId);
+    if (friendIndex === -1)
+      return res.status(400).json({ message: "Friend not in list" });
+
+    user.friends.splice(friendIndex, 1);
+    await user.save();
+
+    res.json({ message: "Friend removed" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
