@@ -7,6 +7,8 @@ mongoose.connect("mongodb://localhost:27017/social_media_db", {
   useUnifiedTopology: true,
 });
 
+app.use(express.json());
+
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
