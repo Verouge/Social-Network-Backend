@@ -24,4 +24,26 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// POST to create a new thought
+router.post("/", async (req, res) => {
+  const thought = new Thought({
+    thoughtText: req.body.thoughtText,
+    username: req.body.username,
+  });
+
+  try {
+    const newThought = await thought.save();
+
+    // Push the created thought's _id to the associated user's thoughts array field
+    const user = await User.findById(req.body.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    user.thoughts.push(newThought._id);
+    await user.save();
+
+    res.status(201).json(newThought);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 module.exports = router;
